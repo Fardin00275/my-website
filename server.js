@@ -59,13 +59,7 @@ app.post("/submit", (req, res) => {
 
 // ✅ Route to view all messages
 app.get("/messages", (req, res) => {
-  db.run(`CREATE TABLE IF NOT EXISTS messages (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT,
-  message TEXT,
-  timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-)`);
-
+  
   db.all(`SELECT * FROM messages`, (err, rows) => {
     if (err) {
       return res.send("Error reading messages.");
@@ -93,6 +87,8 @@ app.post("/delete", (req, res) => {
 });
 
 // Start server
-app.listen(3000, () => {
-  console.log("Server running at http://localhost:3000");
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log("Server running on port " + PORT);
 });
