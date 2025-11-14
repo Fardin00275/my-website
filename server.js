@@ -2,16 +2,13 @@ const express = require("express");
 const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
 
+const db = new sqlite3.Database("./messages.db");
 const app = express();
 
-// Database
-const db = new sqlite3.Database("./messages.db");
-
-// Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Serve static files from public folder
+// Serve static files from /public
 app.use(express.static(path.join(__dirname, "public")));
 
 // Create table if not exists
@@ -22,7 +19,7 @@ db.run(`CREATE TABLE IF NOT EXISTS messages (
   timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
 )`);
 
-// Serve index.html on root request
+// Serve the frontend
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
@@ -49,7 +46,7 @@ app.get("/messages", (req, res) => {
   });
 });
 
-// Update a message
+// Update message
 app.post("/update", (req, res) => {
   const { id, message } = req.body;
 
@@ -63,7 +60,7 @@ app.post("/update", (req, res) => {
   );
 });
 
-// Delete a message
+// Delete message
 app.post("/delete", (req, res) => {
   const { id } = req.body;
 
@@ -73,7 +70,7 @@ app.post("/delete", (req, res) => {
   });
 });
 
-// Render-compatible PORT
+// Port for Render
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log("Server running on port " + PORT);
