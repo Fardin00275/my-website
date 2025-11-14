@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Message App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
     body {
@@ -11,66 +11,68 @@
       padding: 0;
       font-family: "Segoe UI", sans-serif;
       background: #eef2f3;
-      transition: background 0.3s ease, color 0.3s ease;
+      transition: 0.3s;
     }
-
-    body.dark {
-      background: #1e1e1e;
-      color: white;
-    }
+    body.dark { background: #1e1e1e; color: white; }
 
     /* NAVBAR */
     nav {
       background: white;
-      padding: 15px 20px;
       display: flex;
       justify-content: space-between;
+      padding: 14px 22px;
       align-items: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.15);
       position: sticky;
       top: 0;
       z-index: 100;
       transition: 0.3s;
     }
+    body.dark nav { background: #2c2c2c; }
 
-    body.dark nav {
-      background: #2c2c2c;
-      box-shadow: 0 2px 8px rgba(255,255,255,0.05);
-    }
-
-    .nav-links a {
-      margin-right: 15px;
-      text-decoration: none;
+    .nav-left a {
+      margin-right: 20px;
       font-weight: 600;
+      text-decoration: none;
       color: #333;
       transition: 0.3s;
     }
+    body.dark .nav-left a { color: white; }
 
-    body.dark .nav-links a {
+    .nav-right button, .nav-right a {
+      background: #0078ff;
       color: white;
-    }
-
-    .nav-links a:hover {
-      color: #4CAF50;
-    }
-
-    .theme-toggle {
-      padding: 8px 12px;
-      background: black;
-      color: white;
-      border: none;
+      padding: 8px 14px;
       border-radius: 6px;
+      text-decoration: none;
+      border: none;
+      margin-left: 8px;
       cursor: pointer;
       font-weight: 600;
       transition: 0.3s;
     }
-
-    body.dark .theme-toggle {
-      background: white;
-      color: black;
+    .nav-right button:hover, .nav-right a:hover {
+      background: #0066d3;
     }
 
-    /* Layout container */
+    .username-text {
+      font-weight: bold;
+      margin-right: 12px;
+      color: #333;
+    }
+    body.dark .username-text { color: #ddd; }
+
+    .theme-toggle {
+      background: black;
+      padding: 8px 12px;
+      border-radius: 6px;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+    body.dark .theme-toggle { background: white; color: black; }
+
     .container {
       max-width: 700px;
       margin: 30px auto;
@@ -82,85 +84,84 @@
       padding: 20px;
       border-radius: 12px;
       margin-bottom: 30px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.12);
       transition: 0.3s;
     }
-
-    body.dark .card {
-      background: #2c2c2c;
-    }
+    body.dark .card { background: #2c2c2c; }
 
     input, textarea {
       width: 100%;
       padding: 10px;
       margin-top: 6px;
-      border: 1px solid #ccc;
+      border: 1px solid #bbb;
       border-radius: 8px;
       background: white;
       transition: 0.3s;
     }
-
-    body.dark input,
-    body.dark textarea {
+    body.dark input, body.dark textarea {
       background: #3a3a3a;
-      border: 1px solid #555;
+      border: 1px solid #666;
       color: white;
     }
 
     button {
       margin-top: 12px;
       padding: 10px 14px;
-      background: #4CAF50;
       border: none;
+      background: #4CAF50;
       color: white;
-      font-weight: 600;
       border-radius: 8px;
       cursor: pointer;
-      transition: 0.2s ease;
+      font-weight: 600;
     }
 
-    .msg-item {
+    li.msg-item {
       background: white;
       padding: 15px;
       border-radius: 10px;
       margin-bottom: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
       transition: 0.3s;
     }
+    body.dark li.msg-item { background: #2c2c2c; color: white; }
 
-    body.dark .msg-item {
-      background: #2c2c2c;
-    }
   </style>
 </head>
 <body>
 
   <!-- NAVBAR -->
   <nav>
-    <div class="nav-links">
+    <div class="nav-left">
       <a href="/index.html">Home</a>
       <a href="/about.html">About</a>
       <a href="/contact.html">Contact</a>
     </div>
 
+    <div class="nav-right" id="nav-right">
+      <!-- filled by JS -->
+    </div>
+
     <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
   </nav>
 
-  <!-- MAIN PAGE -->
   <div class="container">
     <h1>💬 Message App</h1>
 
-    <div class="card">
+    <!-- FORM -->
+    <div class="card" id="messageCard" style="display:none;">
       <form id="messageForm">
-        <label>Name</label>
-        <input id="name" required>
-
         <label>Message</label>
         <textarea id="message" rows="3" required></textarea>
-
         <button type="submit">Send</button>
       </form>
     </div>
 
+    <!-- LOGIN REQUIRED MESSAGE -->
+    <div class="card" id="loginRequired" style="display:none;">
+      <h3>You must <a href="/login.html">login</a> to send messages.</h3>
+    </div>
+
+    <!-- MESSAGES -->
     <div class="card">
       <h2>Messages</h2>
       <ul id="messageList"></ul>
@@ -168,37 +169,74 @@
   </div>
 
   <script>
-    // THEME
+    // Theme
+    if (localStorage.getItem("theme") === "dark")
+      document.body.classList.add("dark");
+
     function toggleTheme() {
       document.body.classList.toggle("dark");
-      localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
+      localStorage.setItem("theme",
+        document.body.classList.contains("dark") ? "dark" : "light"
+      );
     }
 
-    window.onload = () => {
-      if (localStorage.getItem("theme") === "dark") {
-        document.body.classList.add("dark");
-      }
-    };
+    // Check login status
+    async function loadUser() {
+      const res = await fetch("/me");
+      const user = await res.json();
 
-    // FORM
+      const navRight = document.getElementById("nav-right");
+
+      if (user && user.username) {
+        // LOGGED IN
+        navRight.innerHTML = `
+          <span class="username-text">Welcome, ${user.username}</span>
+          <button onclick="logout()">Logout</button>
+        `;
+
+        document.getElementById("messageCard").style.display = "block";
+        document.getElementById("loginRequired").style.display = "none";
+
+      } else {
+        // LOGGED OUT
+        navRight.innerHTML = `
+          <a href="/login.html">Login</a>
+          <a href="/signup.html">Signup</a>
+        `;
+
+        document.getElementById("messageCard").style.display = "none";
+        document.getElementById("loginRequired").style.display = "block";
+      }
+    }
+
+    // Logout
+    async function logout() {
+      await fetch("/logout", { method: "POST" });
+      location.reload();
+    }
+
+    // Submit message
     document.getElementById("messageForm").addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const name = document.getElementById("name").value;
       const message = document.getElementById("message").value;
 
-      await fetch("/submit", {
+      const res = await fetch("/submit", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, message }),
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ message })
       });
 
-      loadMessages();
-      document.getElementById("name").value = "";
-      document.getElementById("message").value = "";
+      const data = await res.json();
+      if (data.success) {
+        document.getElementById("message").value = "";
+        loadMessages();
+      } else {
+        alert(data.error);
+      }
     });
 
-    // LOAD MESSAGES
+    // Load messages
     async function loadMessages() {
       const res = await fetch("/messages");
       const messages = await res.json();
@@ -206,7 +244,7 @@
       const list = document.getElementById("messageList");
       list.innerHTML = "";
 
-      messages.forEach(msg => {
+      messages.forEach((msg) => {
         const li = document.createElement("li");
         li.className = "msg-item";
         li.innerHTML = `<b>${msg.name}</b>: ${msg.message}`;
@@ -214,6 +252,7 @@
       });
     }
 
+    loadUser();
     loadMessages();
   </script>
 
