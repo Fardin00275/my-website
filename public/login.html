@@ -37,7 +37,6 @@
       border: 1px solid #bbb;
       border-radius: 8px;
       font-size: 15px;
-      transition: 0.3s;
     }
     body.dark input {
       background: #3a3a3a;
@@ -90,10 +89,22 @@
   </div>
 
   <script>
-    // Load Dark mode
+    // 1️⃣ Load Dark Mode
     if (localStorage.getItem("theme") === "dark")
       document.body.classList.add("dark");
 
+    // 2️⃣ Auto redirect if already logged in
+    (async () => {
+      const res = await fetch("/me");
+      const user = await res.json();
+
+      if (user && user.username) {
+        // Already logged in → go to homepage
+        window.location.href = "/index.html";
+      }
+    })();
+
+    // 3️⃣ Login submit handler
     document.getElementById("loginForm").addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -109,8 +120,7 @@
       const data = await res.json();
 
       if (data.success) {
-        alert("Logged in!");
-        window.location.href = "/index.html";
+        window.location.href = "/index.html"; // Redirect immediately
       } else {
         alert(data.error || "Login failed");
       }
