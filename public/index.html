@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Message App</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: #eef2f3;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    body.dark {
+      background: #1e1e1e;
+      color: white;
+    }
+
+    /* NAVBAR */
+    nav {
+      background: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: 0.3s;
+    }
+
+    body.dark nav {
+      background: #2c2c2c;
+      box-shadow: 0 2px 8px rgba(255,255,255,0.05);
+    }
+
+    .nav-links a {
+      margin-right: 15px;
+      text-decoration: none;
+      font-weight: 600;
+      color: #333;
+      transition: 0.3s;
+    }
+
+    body.dark .nav-links a {
+      color: white;
+    }
+
+    .nav-links a:hover {
+      color: #4CAF50;
+    }
+
+    .theme-toggle {
+      padding: 8px 12px;
+      background: black;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+
+    body.dark .theme-toggle {
+      background: white;
+      color: black;
+    }
+
+    /* Layout container */
+    .container {
+      max-width: 700px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      transition: 0.3s;
+    }
+
+    body.dark .card {
+      background: #2c2c2c;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: white;
+      transition: 0.3s;
+    }
+
+    body.dark input,
+    body.dark textarea {
+      background: #3a3a3a;
+      border: 1px solid #555;
+      color: white;
+    }
+
+    button {
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: #4CAF50;
+      border: none;
+      color: white;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .msg-item {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      transition: 0.3s;
+    }
+
+    body.dark .msg-item {
+      background: #2c2c2c;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav>
+    <div class="nav-links">
+      <a href="/index.html">Home</a>
+      <a href="/about.html">About</a>
+      <a href="/contact.html">Contact</a>
+    </div>
+
+    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+  </nav>
+
+  <!-- MAIN PAGE -->
+  <div class="container">
+    <h1>💬 Message App</h1>
+
+    <div class="card">
+      <form id="messageForm">
+        <label>Name</label>
+        <input id="name" required>
+
+        <label>Message</label>
+        <textarea id="message" rows="3" required></textarea>
+
+        <button type="submit">Send</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Messages</h2>
+      <ul id="messageList"></ul>
+    </div>
+  </div>
+
+  <script>
+    // THEME
+    function toggleTheme() {
+      document.body.classList.toggle("dark");
+      localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
+    }
+
+    window.onload = () => {
+      if (localStorage.getItem("theme") === "dark") {
+        document.body.classList.add("dark");
+      }
+    };
+
+    // FORM
+    document.getElementById("messageForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const message = document.getElementById("message").value;
+
+      await fetch("/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, message }),
+      });
+
+      loadMessages();
+      document.getElementById("name").value = "";
+      document.getElementById("message").value = "";
+    });
+
+    // LOAD MESSAGES
+    async function loadMessages() {
+      const res = await fetch("/messages");
+      const messages = await res.json();
+
+      const list = document.getElementById("messageList");
+      list.innerHTML = "";
+
+      messages.forEach(msg => {
+        const li = document.createElement("li");
+        li.className = "msg-item";
+        li.innerHTML = `<b>${msg.name}</b>: ${msg.message}`;
+        list.appendChild(li);
+      });
+    }
+
+    loadMessages();
+  </script>
+
+</body>
+</html>

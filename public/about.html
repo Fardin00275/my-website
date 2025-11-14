@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>About</title>
+  <style>
+    body { 
+      margin: 0;
+      font-family: Segoe UI, sans-serif;
+      background: #eef2f3;
+      padding: 40px;
+      transition: 0.3s;
+    }
+    body.dark { background: #1e1e1e; color: white; }
+
+    .card {
+      max-width: 650px;
+      margin: auto;
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      transition: 0.3s;
+    }
+    body.dark .card { background: #2c2c2c; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h1>About This App</h1>
+    <p>This is a simple message app built using Node.js, Express, and SQLite.</p>
+    <p>You can send messages, edit them, and delete them.</p>
+  </div>
+
+  <script>
+    if (localStorage.getItem("theme") === "dark") {
+      document.body.classList.add("dark");
+    }
+  </script>
+
+</body>
+</html>
