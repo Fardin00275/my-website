@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Message App</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: #eef2f3;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      margin-top: 30px;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    /* Form box */
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+      animation: fadeIn 0.4s ease;
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-top: 10px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+      resize: none;
+    }
+
+    button {
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: #4CAF50;
+      border: none;
+      color: white;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    button:hover {
+      background: #45a049;
+    }
+
+    /* Messages list */
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .msg-item {
+      background: white;
+      padding: 15px;
+      margin-bottom: 12px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      animation: fadeIn 0.4s ease;
+    }
+
+    .msg-header {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 600;
+      color: #444;
+    }
+
+    .msg-text {
+      margin-top: 6px;
+      color: #333;
+      line-height: 1.4;
+    }
+
+    small {
+      color: #666;
+    }
+
+    .msg-buttons {
+      margin-top: 10px;
+    }
+
+    .edit-btn {
+      background: #0078ff;
+    }
+
+    .edit-btn:hover {
+      background: #026bd6;
+    }
+
+    .delete-btn {
+      background: #e63946;
+      margin-left: 6px;
+    }
+
+    .delete-btn:hover {
+      background: #c92e3a;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>💬 Message App</h1>
+
+    <!-- FORM -->
+    <div class="card">
+      <form id="messageForm">
+        <label>Name</label>
+        <input type="text" id="name" required>
+
+        <label>Message</label>
+        <textarea id="message" rows="3" required></textarea>
+
+        <button type="submit">Send</button>
+      </form>
+    </div>
+
+    <!-- MESSAGES -->
+    <div class="card">
+      <h2>Messages</h2>
+      <ul id="messageList"></ul>
+    </div>
+  </div>
+
+  <script>
+    // FORM SUBMIT
+    document.getElementById("messageForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const message = document.getElementById("message").value;
+
+      const res = await fetch("/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, message }),
+      });
+
+      alert(await res.text());
+
+      document.getElementById("name").value = "";
+      document.getElementById("message").value = "";
+
+      loadMessages();
+    });
+
+    // LOAD MESSAGES
+    async function loadMessages() {
+      const res = await fetch("/messages");
+      const messages = await res.json();
+
+      const list = document.getElementById("messageList");
+      list.innerHTML = "";
+
+      messages.forEach((msg) => {
+        let timeString = "Unknown";
+
+        if (msg.timestamp) {
+          const formatted = msg.timestamp.replace(" ", "T");
+          const date = new Date(formatted);
+          if (!isNaN(date)) timeString = date.toLocaleString();
+        }
+
+        const li = document.createElement("li");
+        li.className = "msg-item";
+
+        li.innerHTML = `
+          <div class="msg-header">
+            <span>${msg.name}</span>
+            <small>🕒 ${timeString}</small>
+          </div>
+
+          <div class="msg-text">${msg.message}</div>
+
+          <div class="msg-buttons">
+            <button class="edit-btn" onclick="editMessage(${msg.id}, '${msg.message.replace(/'/g, "\\'")}')">Edit</button>
+            <button class="delete-btn" onclick="deleteMessage(${msg.id})">Delete</button>
+          </div>
+        `;
+
+        list.appendChild(li);
+      });
+    }
+
+    loadMessages();
+
+    // EDIT
+    async function editMessage(id, oldText) {
+      const newMsg = prompt("Edit your message:", oldText);
+      if (!newMsg) return;
+
+      const res = await fetch("/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, message: newMsg }),
+      });
+
+      alert(await res.text());
+      loadMessages();
+    }
+
+    // DELETE
+    async function deleteMessage(id) {
+      if (!confirm("Delete this message?")) return;
+
+      const res = await fetch("/delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+
+      alert(await res.text());
+      loadMessages();
+    }
+  </script>
+
+</body>
+</html>
