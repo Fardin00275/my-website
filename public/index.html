@@ -14,6 +14,12 @@
       display: flex;
       justify-content: center;
       min-height: 100vh;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    body.dark {
+      background: #1e1e1e;
+      color: white;
     }
 
     .container {
@@ -23,13 +29,30 @@
       padding: 20px;
     }
 
-    h1 {
+    h1, h2 {
       text-align: center;
-      color: #333;
-      margin-bottom: 20px;
+      transition: 0.3s;
     }
 
-    /* Form box */
+    .theme-toggle {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      padding: 10px 15px;
+      background: black;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+
+    body.dark .theme-toggle {
+      background: white;
+      color: black;
+    }
+
     .card {
       background: white;
       padding: 20px;
@@ -37,6 +60,12 @@
       box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
       margin-bottom: 30px;
       animation: fadeIn 0.4s ease;
+      transition: 0.3s;
+    }
+
+    body.dark .card {
+      background: #2c2c2c;
+      box-shadow: 0 3px 10px rgba(255, 255, 255, 0.05);
     }
 
     label {
@@ -53,6 +82,14 @@
       border-radius: 8px;
       font-size: 14px;
       resize: none;
+      transition: 0.3s;
+    }
+
+    body.dark input,
+    body.dark textarea {
+      background: #3a3a3a;
+      border: 1px solid #555;
+      color: white;
     }
 
     button {
@@ -71,12 +108,6 @@
       background: #45a049;
     }
 
-    /* Messages list */
-    ul {
-      list-style: none;
-      padding: 0;
-    }
-
     .msg-item {
       background: white;
       padding: 15px;
@@ -84,6 +115,12 @@
       border-radius: 10px;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
       animation: fadeIn 0.4s ease;
+      transition: 0.3s;
+    }
+
+    body.dark .msg-item {
+      background: #2c2c2c;
+      box-shadow: 0 2px 6px rgba(255, 255, 255, 0.05);
     }
 
     .msg-header {
@@ -93,18 +130,22 @@
       color: #444;
     }
 
+    body.dark .msg-header {
+      color: #ddd;
+    }
+
     .msg-text {
       margin-top: 6px;
       color: #333;
       line-height: 1.4;
     }
 
-    small {
-      color: #666;
+    body.dark .msg-text {
+      color: #eee;
     }
 
-    .msg-buttons {
-      margin-top: 10px;
+    .msg-buttons button {
+      margin-right: 8px;
     }
 
     .edit-btn {
@@ -117,7 +158,6 @@
 
     .delete-btn {
       background: #e63946;
-      margin-left: 6px;
     }
 
     .delete-btn:hover {
@@ -131,6 +171,8 @@
   </style>
 </head>
 <body>
+
+  <button class="theme-toggle" onclick="toggleTheme()">🌙 Dark Mode</button>
 
   <div class="container">
     <h1>💬 Message App</h1>
@@ -156,6 +198,23 @@
   </div>
 
   <script>
+    // THEME HANDLING
+    function toggleTheme() {
+      const body = document.body;
+      body.classList.toggle("dark");
+
+      // save preference
+      localStorage.setItem("theme", body.classList.contains("dark") ? "dark" : "light");
+    }
+
+    // Load saved theme
+    window.onload = () => {
+      const theme = localStorage.getItem("theme");
+      if (theme === "dark") {
+        document.body.classList.add("dark");
+      }
+    };
+
     // FORM SUBMIT
     document.getElementById("messageForm").addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -170,10 +229,8 @@
       });
 
       alert(await res.text());
-
       document.getElementById("name").value = "";
       document.getElementById("message").value = "";
-
       loadMessages();
     });
 
