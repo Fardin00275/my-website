@@ -66,10 +66,10 @@
   </div>
 
   <script>
-    // 🕒 Convert timestamp to "x minutes ago"
+    // Convert timestamp to "3 minutes ago"
     function timeAgo(timestamp) {
       const formatted = timestamp.replace(" ", "T");
-      const date = new Date(formatted + "Z"); // ensure UTC
+      const date = new Date(formatted + "Z");
       const seconds = Math.floor((new Date() - date) / 1000);
 
       let interval = Math.floor(seconds / 31536000);
@@ -90,7 +90,7 @@
       return "Just now";
     }
 
-    // ✅ Handle form submission
+    // Submit message
     document.getElementById("messageForm").addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -112,7 +112,7 @@
       loadMessages();
     });
 
-    // ✅ Load all messages
+    // Load messages
     async function loadMessages() {
       const res = await fetch("/messages");
       const messages = await res.json();
@@ -122,9 +122,7 @@
 
       messages.forEach((msg) => {
         let timeString = "Unknown time";
-        if (msg.timestamp) {
-          timeString = timeAgo(msg.timestamp);
-        }
+        if (msg.timestamp) timeString = timeAgo(msg.timestamp);
 
         const li = document.createElement("li");
         li.innerHTML = `
@@ -139,7 +137,7 @@
       });
     }
 
-    // ✏️ Edit message
+    // Edit message
     async function editMessage(id, oldMessage) {
       const newMessage = prompt("Edit your message:", oldMessage);
       if (!newMessage) return;
@@ -155,7 +153,7 @@
       loadMessages();
     }
 
-    // 🗑 Delete message
+    // Delete message
     async function deleteMessage(id) {
       if (!confirm("Are you sure you want to delete this message?")) return;
 
@@ -170,11 +168,8 @@
       loadMessages();
     }
 
-    // 🚀 Load messages on page start
     loadMessages();
-
-    // 🔄 Optional: auto-refresh every minute
-    setInterval(loadMessages, 60000);
+    setInterval(loadMessages, 60000); // auto-refresh
   </script>
 </body>
 </html>
