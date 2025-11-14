@@ -183,7 +183,6 @@
       );
     }
     
-    // ⭐ 1. ADDED GLOBAL USER ID VARIABLE
     let currentUserId = null; 
 
     // Check login status
@@ -200,7 +199,6 @@
           <button onclick="logout()">Logout</button>
         `;
         
-        // ⭐ 2. SET THE USER ID
         currentUserId = user.id; 
 
         document.getElementById("messageCard").style.display = "block";
@@ -213,7 +211,6 @@
           <a href="/signup.html">Signup</a>
         `;
         
-        // ⭐ 2. CLEAR THE USER ID
         currentUserId = null;
 
         document.getElementById("messageCard").style.display = "none";
@@ -260,18 +257,18 @@
         const li = document.createElement("li");
         li.className = "msg-item";
 
-        // ⭐ 3. CHECK USER ID AND ADD BUTTONS
         let buttons = '';
         if (msg.user_id === currentUserId) {
+          // ⭐ NOTE: Escaping the message content for the prompt
+          const escapedMessage = msg.message.replace(/'/g, "\\'");
           buttons = `
             <div class="msg-actions">
-              <button onclick="editMessage(${msg.id}, '${msg.message}')" style="background: #0078ff;">Edit</button>
+              <button onclick="editMessage(${msg.id}, '${escapedMessage}')" style="background: #0078ff;">Edit</button>
               <button onclick="deleteMessage(${msg.id})" style="background: #dc3545;">Delete</button>
             </div>
           `;
         }
 
-        // ⭐ 3. UPDATE innerHTML TO INCLUDE BUTTONS
         li.innerHTML = `
           <b>${msg.name}</b>: ${msg.message}
           ${buttons}
@@ -281,16 +278,55 @@
       });
     }
 
-    // ⭐ 4. ADD PLACEHOLDER FUNCTIONS
+    // ⭐ 4. FULLY IMPLEMENTED FUNCTIONS
     
-    function editMessage(id, currentMessage) {
-      alert(`TODO: Edit message ID: ${id}\nMessage: ${currentMessage}`);
-      // We will add the logic here next
+    async function editMessage(id, currentMessage) {
+      // 1. Get new message from user
+      const newMessage = prompt("Enter your new message:", currentMessage);
+
+      // 2. Check if user cancelled or left it blank
+      if (newMessage === null || newMessage.trim() === "") {
+        return; // User cancelled or entered empty message
+      }
+
+      // 3. Send the update request to the server
+      const res = await fetch("/update", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ id: id, message: newMessage })
+      });
+
+      const data = await res.json();
+
+      // 4. Reload messages if successful
+      if (data.success) {
+        loadMessages(); // Refresh the message list
+      } else {
+        alert(data.error || "Failed to update message.");
+      }
     }
 
-    function deleteMessage(id) {
-      alert(`TODO: Delete message ID: ${id}`);
-      // We will add the logic here next
+    async function deleteMessage(id) {
+      // 1. Confirm deletion
+      if (!confirm("Are you sure you want to delete this message?")) {
+        return; // User clicked "Cancel"
+      }
+
+      // 2. Send the delete request to the server
+      const res = await fetch("/delete", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ id: id })
+      });
+
+      const data = await res.json();
+
+      // 3. Reload messages if successful
+      if (data.success) {
+        loadMessages(); // Refresh the message list
+      } else {
+        alert(data.error || "Failed to delete message.");
+      }
     }
 
 
