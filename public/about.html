@@ -1,42 +1,112 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>About</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — Message App</title>
   <style>
-    body { 
+    body {
       margin: 0;
-      font-family: Segoe UI, sans-serif;
+      padding: 0;
+      font-family: "Segoe UI", sans-serif;
       background: #eef2f3;
-      padding: 40px;
       transition: 0.3s;
     }
     body.dark { background: #1e1e1e; color: white; }
 
+    nav {
+      background: white;
+      display: flex;
+      justify-content: space-between;
+      padding: 14px 22px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    body.dark nav { background: #2c2c2c; }
+
+    nav a {
+      text-decoration: none;
+      font-weight: 600;
+      margin-right: 20px;
+      color: #333;
+    }
+    body.dark nav a { color: white; }
+
+    .theme-toggle {
+      background: black;
+      padding: 8px 12px;
+      border-radius: 6px;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    body.dark .theme-toggle {
+      background: white;
+      color: black;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
     .card {
-      max-width: 650px;
-      margin: auto;
       background: white;
       padding: 25px;
       border-radius: 12px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-      transition: 0.3s;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.12);
     }
     body.dark .card { background: #2c2c2c; }
   </style>
 </head>
 <body>
 
-  <div class="card">
-    <h1>About This App</h1>
-    <p>This is a simple message app built using Node.js, Express, and SQLite.</p>
-    <p>You can send messages, edit them, and delete them.</p>
+<nav>
+  <div>
+    <a href="/index.html">Home</a>
+    <a href="/about.html">About</a>
+    <a href="/contact.html">Contact</a>
   </div>
 
-  <script>
-    if (localStorage.getItem("theme") === "dark") {
-      document.body.classList.add("dark");
-    }
-  </script>
+  <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+</nav>
+
+<div class="container">
+  <div class="card">
+    <h1>About This Website</h1>
+    <p>
+      This is a simple and modern full-stack message application built using:
+    </p>
+
+    <ul>
+      <li>⚡ Node.js</li>
+      <li>⚡ Express.js</li>
+      <li>⚡ SQLite database</li>
+      <li>⚡ User Login System</li>
+      <li>⚡ Dynamic UI with dark mode</li>
+    </ul>
+
+    <p>
+      You can create an account, log in, send messages, edit messages, delete messages,
+      and enjoy a clean responsive design.
+    </p>
+  </div>
+</div>
+
+<script>
+  if (localStorage.getItem("theme") === "dark")
+    document.body.classList.add("dark");
+
+  function toggleTheme() {
+    document.body.classList.toggle("dark");
+    localStorage.setItem("theme",
+      document.body.classList.contains("dark") ? "dark" : "light"
+    );
+  }
+</script>
 
 </body>
 </html>
