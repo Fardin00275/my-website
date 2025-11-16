@@ -4,67 +4,8 @@
   <meta charset="UTF-8">
   <title>Signup</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: "Segoe UI", sans-serif;
-      background: #eef2f3;
-      transition: 0.3s;
-    }
-    body.dark { background: #1e1e1e; color: white; }
-
-    .container {
-      max-width: 400px;
-      margin: 60px auto;
-      padding: 20px;
-    }
-
-    .card {
-      background: white;
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.15);
-      transition: 0.3s;
-    }
-    body.dark .card { background: #2c2c2c; }
-
-    input {
-      width: 100%;
-      padding: 10px;
-      margin-top: 12px;
-      border: 1px solid #bbb;
-      border-radius: 8px;
-      font-size: 15px;
-    }
-    body.dark input {
-      background: #3a3a3a;
-      color: white;
-      border: 1px solid #666;
-    }
-
-    button {
-      width: 100%;
-      margin-top: 18px;
-      padding: 10px;
-      background: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #43a047;
-    }
-
-    .link {
-      text-align: center;
-      margin-top: 10px;
-    }
-  </style>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/common.js"></script>
 </head>
 <body>
 
@@ -75,7 +16,7 @@
       <form id="signupForm">
         <input type="text" id="username" placeholder="Username" required>
         <input type="password" id="password" placeholder="Password" required>
-        <button type="submit">Create Account</button>
+        <button type="submit" style="background: #4CAF50;">Create Account</button>
       </form>
 
       <div class="link">
@@ -85,8 +26,7 @@
   </div>
 
   <script>
-    if (localStorage.getItem("theme") === "dark")
-      document.body.classList.add("dark");
+    // Note: The theme check is now gone from here.
 
     document.getElementById("signupForm").addEventListener("submit", async (e) => {
       e.preventDefault();
