@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <title>Message App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="/style.css">
-<script src="/common.js"></script>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/common.js"></script>
 </head>
 <body>
 
@@ -43,8 +43,29 @@
   </div>
 
   <script>
-    // Theme
-   
+    
+    // ⭐ 1. TIMEAGO HELPER FUNCTION
+    function timeAgo(dateString) {
+      const date = new Date(dateString);
+      const now = new Date();
+      const seconds = Math.round((now - date) / 1000);
+      const minutes = Math.round(seconds / 60);
+      const hours = Math.round(minutes / 60);
+      const days = Math.round(hours / 24);
+
+      if (seconds < 60) return "just now";
+      if (minutes < 60) return `${minutes} min ago`;
+      if (hours < 24) return `${hours} hr ago`;
+      if (days === 1) return "yesterday";
+      if (days < 7) return `${days} days ago`;
+
+      // Format as "Nov 16" for older dates
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
+    }
+
     let currentUserId = null; 
 
     // Check login status
@@ -107,7 +128,7 @@
       }
     });
 
-    // Load messages
+    // ⭐ 2. UPDATED LOADMESSAGES FUNCTION
     async function loadMessages() {
       const res = await fetch("/messages");
       const messages = await res.json();
@@ -119,9 +140,11 @@
         const li = document.createElement("li");
         li.className = "msg-item";
 
+        // Call the timeago function
+        const timeString = timeAgo(msg.timestamp);
+
         let buttons = '';
         if (msg.user_id === currentUserId) {
-          // ⭐ NOTE: Escaping the message content for the prompt
           const escapedMessage = msg.message.replace(/'/g, "\\'");
           buttons = `
             <div class="msg-actions">
@@ -131,16 +154,19 @@
           `;
         }
 
+        // Add the timestring to the HTML
         li.innerHTML = `
-          <b>${msg.name}</b>: ${msg.message}
+          <div>
+            <b>${msg.name}</b>
+            <small style="color: #666; margin-left: 8px;">${timeString}</small>
+          </div>
+          <div style="margin-top: 5px;">${msg.message}</div>
           ${buttons}
         `;
         
         list.appendChild(li);
       });
     }
-
-    // ⭐ 4. FULLY IMPLEMENTED FUNCTIONS
     
     async function editMessage(id, currentMessage) {
       // 1. Get new message from user
