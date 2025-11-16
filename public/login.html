@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Login</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<script src="/common.js"></script>
   <style>
     body {
       margin: 0;
@@ -89,10 +89,6 @@
   </div>
 
   <script>
-    // 1️⃣ Load Dark Mode
-    if (localStorage.getItem("theme") === "dark")
-      document.body.classList.add("dark");
-
     // 2️⃣ Auto redirect if already logged in
     (async () => {
       const res = await fetch("/me");
